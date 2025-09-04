@@ -1,0 +1,1167 @@
+1
+00:00:00,840 --> 00:00:05,700
+there is this beautiful particle system
+
+2
+00:00:02,940 --> 00:00:07,740
+called particle life it's fascinating
+
+3
+00:00:05,700 --> 00:00:09,540
+Behavior simply arises from random
+
+4
+00:00:07,740 --> 00:00:11,340
+asymmetrical attraction
+
+5
+00:00:09,540 --> 00:00:13,139
+I will now first explain the simple
+
+6
+00:00:11,340 --> 00:00:15,299
+rules of this particle system using
+
+7
+00:00:13,139 --> 00:00:17,039
+mathematical notation and then I will
+
+8
+00:00:15,299 --> 00:00:18,420
+show you an example implementation in
+
+9
+00:00:17,039 --> 00:00:20,400
+JavaScript
+
+10
+00:00:18,420 --> 00:00:21,900
+my goal is that you can then go ahead
+
+11
+00:00:20,400 --> 00:00:23,699
+and write your own implementation of
+
+12
+00:00:21,900 --> 00:00:25,320
+particle life because I think this
+
+13
+00:00:23,699 --> 00:00:27,300
+particle system deserves a lot more
+
+14
+00:00:25,320 --> 00:00:28,140
+attention and people playing around with
+
+15
+00:00:27,300 --> 00:00:30,060
+it
+
+16
+00:00:28,140 --> 00:00:32,279
+I also hope that this video will help
+
+17
+00:00:30,060 --> 00:00:34,380
+using a common notation across different
+
+18
+00:00:32,279 --> 00:00:36,120
+implementations of particle life
+
+19
+00:00:34,380 --> 00:00:38,100
+if you only want to see footage of
+
+20
+00:00:36,120 --> 00:00:40,500
+particle live check out the other video
+
+21
+00:00:38,100 --> 00:00:42,660
+on my channel and on particlelife.com
+
+22
+00:00:40,500 --> 00:00:43,850
+you can download an Advanced Simulator
+
+23
+00:00:42,660 --> 00:00:47,840
+for particle life
+
+24
+00:00:43,850 --> 00:00:47,840
+[Music]
+
+25
+00:00:48,300 --> 00:00:52,079
+alright each particle has three
+
+26
+00:00:50,940 --> 00:00:54,960
+properties
+
+27
+00:00:52,079 --> 00:00:56,280
+a constant color or type which is simply
+
+28
+00:00:54,960 --> 00:00:59,039
+an integer
+
+29
+00:00:56,280 --> 00:01:01,500
+and a position and a velocity both of
+
+30
+00:00:59,039 --> 00:01:03,780
+which are real vectors
+
+31
+00:01:01,500 --> 00:01:05,519
+and as in physics the velocity here is
+
+32
+00:01:03,780 --> 00:01:07,799
+written as the time derivative of the
+
+33
+00:01:05,519 --> 00:01:09,960
+position indicated by the little dot on
+
+34
+00:01:07,799 --> 00:01:12,119
+top of the position variable
+
+35
+00:01:09,960 --> 00:01:15,000
+a particle is only affected by particles
+
+36
+00:01:12,119 --> 00:01:17,700
+that are closer than one distance unit
+
+37
+00:01:15,000 --> 00:01:19,619
+and for each of these particles we
+
+38
+00:01:17,700 --> 00:01:22,080
+compute The Distance by subtracting the
+
+39
+00:01:19,619 --> 00:01:23,820
+coordinates and taking the length of
+
+40
+00:01:22,080 --> 00:01:25,860
+that vector
+
+41
+00:01:23,820 --> 00:01:28,500
+and we plug that into the force function
+
+42
+00:01:25,860 --> 00:01:30,180
+that tells us how strong the forces that
+
+43
+00:01:28,500 --> 00:01:32,159
+pulls this particle in the direction of
+
+44
+00:01:30,180 --> 00:01:33,720
+the other particle
+
+45
+00:01:32,159 --> 00:01:35,400
+and there's also another thing that we
+
+46
+00:01:33,720 --> 00:01:38,520
+need to compute the magnitude of the
+
+47
+00:01:35,400 --> 00:01:40,560
+force the attraction Factor
+
+48
+00:01:38,520 --> 00:01:43,020
+we have a matrix a that tells us for
+
+49
+00:01:40,560 --> 00:01:45,000
+each combination of colors how strongly
+
+50
+00:01:43,020 --> 00:01:48,659
+two particles of these colors should be
+
+51
+00:01:45,000 --> 00:01:50,399
+attracted to or repelled by each other
+
+52
+00:01:48,659 --> 00:01:52,560
+since we know the colors of both
+
+53
+00:01:50,399 --> 00:01:54,240
+particles we can simply look into the
+
+54
+00:01:52,560 --> 00:01:56,700
+corresponding row and column to fetch
+
+55
+00:01:54,240 --> 00:01:58,799
+the attraction factor a
+
+56
+00:01:56,700 --> 00:02:01,140
+and we will also plug that into the
+
+57
+00:01:58,799 --> 00:02:03,020
+force function
+
+58
+00:02:01,140 --> 00:02:05,700
+and how does this Force function work
+
+59
+00:02:03,020 --> 00:02:07,079
+there are multiple ways to do this but I
+
+60
+00:02:05,700 --> 00:02:08,880
+found the following to be easy to
+
+61
+00:02:07,079 --> 00:02:10,200
+implement while still producing good
+
+62
+00:02:08,880 --> 00:02:12,420
+lucking results
+
+63
+00:02:10,200 --> 00:02:14,640
+I have a linear repulsive force that is
+
+64
+00:02:12,420 --> 00:02:17,640
+initially negative one and then reaches
+
+65
+00:02:14,640 --> 00:02:20,819
+0 at some constant radius beta I always
+
+66
+00:02:17,640 --> 00:02:23,160
+choose beta equal to 0.3 but that's just
+
+67
+00:02:20,819 --> 00:02:24,959
+a random choice of mine and then comes
+
+68
+00:02:23,160 --> 00:02:26,819
+the attractive part which consists of
+
+69
+00:02:24,959 --> 00:02:29,640
+two linear parts that are scaled
+
+70
+00:02:26,819 --> 00:02:31,200
+proportional to the attraction Factor
+
+71
+00:02:29,640 --> 00:02:33,060
+and here's how this would look in
+
+72
+00:02:31,200 --> 00:02:35,459
+JavaScript
+
+73
+00:02:33,060 --> 00:02:37,980
+but the exact shape of the function is
+
+74
+00:02:35,459 --> 00:02:40,379
+not really important all you need is a
+
+75
+00:02:37,980 --> 00:02:42,239
+universal repulsive part and another
+
+76
+00:02:40,379 --> 00:02:44,220
+part that is proportional to the
+
+77
+00:02:42,239 --> 00:02:46,500
+attraction factor and then the results
+
+78
+00:02:44,220 --> 00:02:49,560
+will look similar
+
+79
+00:02:46,500 --> 00:02:51,360
+the magnitude of the force can vary but
+
+80
+00:02:49,560 --> 00:02:53,400
+we always want the force to act in the
+
+81
+00:02:51,360 --> 00:02:55,319
+direction of the other particle
+
+82
+00:02:53,400 --> 00:02:57,840
+which is why we multiply the magnitude
+
+83
+00:02:55,319 --> 00:03:00,860
+of the force with a unit Vector that
+
+84
+00:02:57,840 --> 00:03:00,860
+points in this direction
+
+85
+00:03:01,440 --> 00:03:06,060
+we repeat this for all particles inside
+
+86
+00:03:03,540 --> 00:03:08,180
+the maximum radius and add up the
+
+87
+00:03:06,060 --> 00:03:08,180
+results
+
+88
+00:03:09,840 --> 00:03:14,760
+and if we assume that all particles have
+
+89
+00:03:12,300 --> 00:03:17,280
+a mass of one this finally gives us the
+
+90
+00:03:14,760 --> 00:03:19,140
+acceleration for this particle
+
+91
+00:03:17,280 --> 00:03:20,580
+and here the acceleration is written as
+
+92
+00:03:19,140 --> 00:03:22,739
+the second time derivative of the
+
+93
+00:03:20,580 --> 00:03:25,319
+position indicated by the two dots on
+
+94
+00:03:22,739 --> 00:03:27,480
+top of the position variable
+
+95
+00:03:25,319 --> 00:03:30,840
+and we can hide the indices to make this
+
+96
+00:03:27,480 --> 00:03:33,120
+formula look less crowded
+
+97
+00:03:30,840 --> 00:03:34,560
+now usually when implementing this you
+
+98
+00:03:33,120 --> 00:03:37,080
+don't want the maximum radius of
+
+99
+00:03:34,560 --> 00:03:38,280
+interaction to be one distance unit for
+
+100
+00:03:37,080 --> 00:03:40,560
+example if your coordinates are
+
+101
+00:03:38,280 --> 00:03:41,940
+expressed in terms of pixels one pixel
+
+102
+00:03:40,560 --> 00:03:43,799
+would be too small
+
+103
+00:03:41,940 --> 00:03:46,860
+but the force function is expecting
+
+104
+00:03:43,799 --> 00:03:48,959
+distances in the range of 0 to 1.
+
+105
+00:03:46,860 --> 00:03:51,000
+to account for this we simply divide the
+
+106
+00:03:48,959 --> 00:03:52,319
+Distance by R Max before we send it to
+
+107
+00:03:51,000 --> 00:03:54,540
+the force function
+
+108
+00:03:52,319 --> 00:03:55,560
+and that way it's in the range of 0 to 1
+
+109
+00:03:54,540 --> 00:03:57,780
+again
+
+110
+00:03:55,560 --> 00:04:00,239
+then we just have to scale the result by
+
+111
+00:03:57,780 --> 00:04:01,920
+R Max afterwards
+
+112
+00:04:00,239 --> 00:04:03,659
+so let's summarize
+
+113
+00:04:01,920 --> 00:04:07,140
+to compute the acceleration of a
+
+114
+00:04:03,659 --> 00:04:09,239
+particle we sum over all other particles
+
+115
+00:04:07,140 --> 00:04:11,220
+for each other particle we compute the
+
+116
+00:04:09,239 --> 00:04:14,220
+force based on the normalized distance
+
+117
+00:04:11,220 --> 00:04:16,260
+and on the attraction Factor
+
+118
+00:04:14,220 --> 00:04:18,299
+we apply the force in the direction of
+
+119
+00:04:16,260 --> 00:04:19,979
+the other particle and then scale the
+
+120
+00:04:18,299 --> 00:04:22,260
+result by R Max
+
+121
+00:04:19,979 --> 00:04:24,600
+particle life is obviously not physical
+
+122
+00:04:22,260 --> 00:04:25,620
+just as Conway's Game of Life is not
+
+123
+00:04:24,600 --> 00:04:27,720
+physical
+
+124
+00:04:25,620 --> 00:04:29,639
+for example if the attraction Matrix is
+
+125
+00:04:27,720 --> 00:04:31,979
+not symmetrical particle life is
+
+126
+00:04:29,639 --> 00:04:34,380
+breaking Newton's Third Law of equal and
+
+127
+00:04:31,979 --> 00:04:36,060
+opposite forces and this also means that
+
+128
+00:04:34,380 --> 00:04:38,100
+there is no energy conservation in the
+
+129
+00:04:36,060 --> 00:04:40,320
+system particles can just build up
+
+130
+00:04:38,100 --> 00:04:41,580
+energy forever and that's why we need
+
+131
+00:04:40,320 --> 00:04:43,680
+friction
+
+132
+00:04:41,580 --> 00:04:45,540
+when we want to transform our computed
+
+133
+00:04:43,680 --> 00:04:47,400
+acceleration into changes in velocity
+
+134
+00:04:45,540 --> 00:04:49,199
+and position we need to choose a
+
+135
+00:04:47,400 --> 00:04:51,180
+timestep delta T for each frame that
+
+136
+00:04:49,199 --> 00:04:53,160
+we're simulating and multiply the
+
+137
+00:04:51,180 --> 00:04:55,139
+acceleration with that time step and add
+
+138
+00:04:53,160 --> 00:04:56,820
+it to the existing velocity
+
+139
+00:04:55,139 --> 00:05:00,240
+and then we do the same with a new
+
+140
+00:04:56,820 --> 00:05:02,639
+velocity and the existing position
+
+141
+00:05:00,240 --> 00:05:04,560
+but in order to introduce friction we
+
+142
+00:05:02,639 --> 00:05:06,600
+multiply the existing velocity with a
+
+143
+00:05:04,560 --> 00:05:08,400
+constant between 0 and 1 before we do
+
+144
+00:05:06,600 --> 00:05:10,500
+all of this
+
+145
+00:05:08,400 --> 00:05:12,720
+a more elegant way to write this is in
+
+146
+00:05:10,500 --> 00:05:14,160
+terms of the half-life that's just a
+
+147
+00:05:12,720 --> 00:05:16,800
+constant that tells us after how much
+
+148
+00:05:14,160 --> 00:05:19,620
+time half of the Velocity should be lost
+
+149
+00:05:16,800 --> 00:05:21,240
+due to friction and this way our
+
+150
+00:05:19,620 --> 00:05:23,580
+simulation doesn't depend on the exact
+
+151
+00:05:21,240 --> 00:05:25,620
+value of delta T and this means that we
+
+152
+00:05:23,580 --> 00:05:27,000
+can for example adjust delta T depending
+
+153
+00:05:25,620 --> 00:05:29,160
+on the current frame rate of the
+
+154
+00:05:27,000 --> 00:05:29,880
+software and give the simulation a
+
+155
+00:05:29,160 --> 00:05:31,320
+smoother feeling
+
+156
+00:05:29,880 --> 00:05:33,419
+[Music]
+
+157
+00:05:31,320 --> 00:05:35,880
+there is a problem with integrating the
+
+158
+00:05:33,419 --> 00:05:38,160
+acceleration like this sometimes we see
+
+159
+00:05:35,880 --> 00:05:39,900
+these 10 spots getting the Zoomies
+
+160
+00:05:38,160 --> 00:05:41,880
+and people who are new to this often
+
+161
+00:05:39,900 --> 00:05:43,680
+find this very exciting but this
+
+162
+00:05:41,880 --> 00:05:46,259
+phenomenon is not something innate to
+
+163
+00:05:43,680 --> 00:05:48,360
+particle life it's just an artifact of
+
+164
+00:05:46,259 --> 00:05:50,699
+our discrete computations
+
+165
+00:05:48,360 --> 00:05:52,680
+it happens in areas with high density of
+
+166
+00:05:50,699 --> 00:05:54,720
+particles that are attracted to each
+
+167
+00:05:52,680 --> 00:05:56,759
+other and the forces are really strong
+
+168
+00:05:54,720 --> 00:05:59,520
+and point towards the center
+
+169
+00:05:56,759 --> 00:06:02,280
+now our time step is so big that all
+
+170
+00:05:59,520 --> 00:06:04,259
+particles just jump across the center
+
+171
+00:06:02,280 --> 00:06:06,419
+if we choose a smaller delta T to
+
+172
+00:06:04,259 --> 00:06:08,460
+actually see what's going on we see how
+
+173
+00:06:06,419 --> 00:06:11,180
+the whole situation calms down and
+
+174
+00:06:08,460 --> 00:06:11,180
+stabilizes
+
+175
+00:06:11,580 --> 00:06:14,539
+foreign
+
+176
+00:06:15,850 --> 00:06:22,440
+[Music]
+
+177
+00:06:20,300 --> 00:06:24,120
+here's an overview over all the
+
+178
+00:06:22,440 --> 00:06:26,880
+variables and parameters that we need to
+
+179
+00:06:24,120 --> 00:06:28,680
+describe our system
+
+180
+00:06:26,880 --> 00:06:30,600
+to get started we have to say how many
+
+181
+00:06:28,680 --> 00:06:32,880
+particles colors and dimensions we have
+
+182
+00:06:30,600 --> 00:06:34,440
+in our system these parameters basically
+
+183
+00:06:32,880 --> 00:06:37,080
+tell us how much memory we need to
+
+184
+00:06:34,440 --> 00:06:38,880
+allocate in order to simulate the system
+
+185
+00:06:37,080 --> 00:06:41,639
+the attraction Matrix and the friction
+
+186
+00:06:38,880 --> 00:06:43,500
+Half-Life describe the behavior of the
+
+187
+00:06:41,639 --> 00:06:45,300
+particle system and are therefore the
+
+188
+00:06:43,500 --> 00:06:48,000
+most important parameters
+
+189
+00:06:45,300 --> 00:06:49,800
+the time step and the maximum radius are
+
+190
+00:06:48,000 --> 00:06:52,139
+not really parameters of the particle
+
+191
+00:06:49,800 --> 00:06:53,759
+system itself but we usually have them
+
+192
+00:06:52,139 --> 00:06:55,380
+in our code when simulating this
+
+193
+00:06:53,759 --> 00:06:56,819
+particle system
+
+194
+00:06:55,380 --> 00:06:58,860
+now here I'm already writing some
+
+195
+00:06:56,819 --> 00:07:00,300
+boilerplate code in JavaScript
+
+196
+00:06:58,860 --> 00:07:02,639
+you can of course do this in any
+
+197
+00:07:00,300 --> 00:07:04,440
+language I just chose JavaScript for
+
+198
+00:07:02,639 --> 00:07:06,300
+this tutorial because it's a very
+
+199
+00:07:04,440 --> 00:07:08,400
+popular language
+
+200
+00:07:06,300 --> 00:07:10,380
+so first I Define some parameters that
+
+201
+00:07:08,400 --> 00:07:12,419
+we just talked about and initialize a
+
+202
+00:07:10,380 --> 00:07:15,860
+random attraction Matrix with the values
+
+203
+00:07:12,419 --> 00:07:15,860
+between negative 1 and 1.
+
+204
+00:07:16,319 --> 00:07:20,699
+then I create some arrays that store the
+
+205
+00:07:18,479 --> 00:07:23,039
+properties of all particles
+
+206
+00:07:20,699 --> 00:07:26,460
+I initialize all colors with random
+
+207
+00:07:23,039 --> 00:07:28,560
+integers between 0 and M minus 1. all
+
+208
+00:07:26,460 --> 00:07:32,099
+positions with random floats between 0
+
+209
+00:07:28,560 --> 00:07:34,560
+and 1 and the velocities with zero
+
+210
+00:07:32,099 --> 00:07:36,780
+then I create a loop that updates and
+
+211
+00:07:34,560 --> 00:07:38,220
+draws these particles
+
+212
+00:07:36,780 --> 00:07:40,199
+drawing the particles is pretty
+
+213
+00:07:38,220 --> 00:07:42,479
+straightforward you just have to scale
+
+214
+00:07:40,199 --> 00:07:45,120
+them up to screen coordinates
+
+215
+00:07:42,479 --> 00:07:47,280
+for the colors I set the Hue value to
+
+216
+00:07:45,120 --> 00:07:50,000
+the integer value divided by the number
+
+217
+00:07:47,280 --> 00:07:50,000
+of colors
+
+218
+00:07:51,240 --> 00:07:55,020
+updating the positions is also pretty
+
+219
+00:07:53,160 --> 00:07:57,780
+straightforward we simply add the
+
+220
+00:07:55,020 --> 00:07:59,039
+velocity times delta T as we discussed
+
+221
+00:07:57,780 --> 00:08:00,960
+earlier
+
+222
+00:07:59,039 --> 00:08:03,599
+to update the velocities we need to look
+
+223
+00:08:00,960 --> 00:08:05,940
+at every pair of particles that's why
+
+224
+00:08:03,599 --> 00:08:08,099
+I'm creating a nested for Loop here
+
+225
+00:08:05,940 --> 00:08:10,139
+and I make sure to skip the particle
+
+226
+00:08:08,099 --> 00:08:12,240
+itself when looking at the neighbors
+
+227
+00:08:10,139 --> 00:08:14,759
+and I checked that the distance value is
+
+228
+00:08:12,240 --> 00:08:16,680
+actually greater than zero and smaller
+
+229
+00:08:14,759 --> 00:08:19,139
+than the maximum radius
+
+230
+00:08:16,680 --> 00:08:21,240
+then I normalize the distance and plug
+
+231
+00:08:19,139 --> 00:08:23,460
+it into the force function together with
+
+232
+00:08:21,240 --> 00:08:24,599
+the attraction factor which I fetch from
+
+233
+00:08:23,460 --> 00:08:26,400
+The Matrix
+
+234
+00:08:24,599 --> 00:08:29,160
+and then scale the directions unit
+
+235
+00:08:26,400 --> 00:08:31,560
+Vector with that value
+
+236
+00:08:29,160 --> 00:08:33,839
+after adding up all these results I
+
+237
+00:08:31,560 --> 00:08:34,919
+scale them by rmx and add them to the
+
+238
+00:08:33,839 --> 00:08:37,380
+velocity
+
+239
+00:08:34,919 --> 00:08:39,000
+and before I add them I also apply the
+
+240
+00:08:37,380 --> 00:08:41,219
+friction Factor
+
+241
+00:08:39,000 --> 00:08:42,599
+then I implement the force function and
+
+242
+00:08:41,219 --> 00:08:44,279
+we're done
+
+243
+00:08:42,599 --> 00:08:45,959
+but right now nothing is happening in
+
+244
+00:08:44,279 --> 00:08:48,120
+our particle system because the maximum
+
+245
+00:08:45,959 --> 00:08:49,740
+Force value is just one
+
+246
+00:08:48,120 --> 00:08:51,540
+and we would have to wait ages for
+
+247
+00:08:49,740 --> 00:08:53,820
+something interesting to happen so we
+
+248
+00:08:51,540 --> 00:08:55,800
+can simply introduce a new variable and
+
+249
+00:08:53,820 --> 00:08:58,040
+scale all forces with that constant
+
+250
+00:08:55,800 --> 00:08:58,040
+value
+
+251
+00:09:01,500 --> 00:09:06,420
+now we can easily make this 3D by simply
+
+252
+00:09:04,380 --> 00:09:08,700
+adding additional arrays for the Z
+
+253
+00:09:06,420 --> 00:09:10,800
+coordinate and respecting the new
+
+254
+00:09:08,700 --> 00:09:12,300
+coordinate in all relevant parts of the
+
+255
+00:09:10,800 --> 00:09:14,399
+code
+
+256
+00:09:12,300 --> 00:09:16,200
+and to render the particles with a 3D
+
+257
+00:09:14,399 --> 00:09:18,540
+perspective I let the coordinates range
+
+258
+00:09:16,200 --> 00:09:20,399
+from negative one to one and then scale
+
+259
+00:09:18,540 --> 00:09:21,480
+the screen coordinates based on the Z
+
+260
+00:09:20,399 --> 00:09:23,700
+coordinate
+
+261
+00:09:21,480 --> 00:09:25,860
+and then realize again that nothing is
+
+262
+00:09:23,700 --> 00:09:28,080
+happening because particles in 3D are
+
+263
+00:09:25,860 --> 00:09:30,240
+now scattered further apart
+
+264
+00:09:28,080 --> 00:09:33,540
+so we simply increase our maximum radius
+
+265
+00:09:30,240 --> 00:09:35,339
+to make everything feel closer together
+
+266
+00:09:33,540 --> 00:09:37,200
+now there are two further things you
+
+267
+00:09:35,339 --> 00:09:39,060
+probably want to do from here on
+
+268
+00:09:37,200 --> 00:09:40,680
+firstly you could introduce periodic
+
+269
+00:09:39,060 --> 00:09:43,080
+boundary conditions so that the
+
+270
+00:09:40,680 --> 00:09:44,580
+particles don't leave the screen and
+
+271
+00:09:43,080 --> 00:09:46,620
+secondly you can Implement a space
+
+272
+00:09:44,580 --> 00:09:49,500
+partitioning so that you don't have to
+
+273
+00:09:46,620 --> 00:09:51,240
+check all n Square pairs of particles
+
+274
+00:09:49,500 --> 00:09:52,140
+this will make your simulation much
+
+275
+00:09:51,240 --> 00:09:53,940
+faster
+
+276
+00:09:52,140 --> 00:09:56,339
+and this is even more important than
+
+277
+00:09:53,940 --> 00:09:59,040
+using a fast programming language or
+
+278
+00:09:56,339 --> 00:10:00,839
+optimizing your code in any other way
+
+279
+00:09:59,040 --> 00:10:02,760
+and I think I will leave it at that for
+
+280
+00:10:00,839 --> 00:10:04,380
+now I will make more of these kinds of
+
+281
+00:10:02,760 --> 00:10:06,540
+videos so if you like them consider
+
+282
+00:10:04,380 --> 00:10:07,740
+subscribing and remember that you can
+
+283
+00:10:06,540 --> 00:10:09,899
+download the simulator from
+
+284
+00:10:07,740 --> 00:10:12,360
+particlelife.com for which contributions
+
+285
+00:10:09,899 --> 00:10:14,279
+on GitHub are also very appreciated by
+
+286
+00:10:12,360 --> 00:10:16,500
+the way and we also have a Discord
+
+287
+00:10:14,279 --> 00:10:18,000
+server for particle life that is linked
+
+288
+00:10:16,500 --> 00:10:19,850
+in the description
+
+289
+00:10:18,000 --> 00:10:21,839
+thank you so much for watching
+
+290
+00:10:19,850 --> 00:10:24,839
+[Music]
+
+291
+00:10:21,839 --> 00:10:24,839
+foreign
+
+292
+00:10:27,899 --> 00:10:30,899
+foreign
